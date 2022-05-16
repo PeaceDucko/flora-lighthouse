@@ -1,21 +1,36 @@
 from flask import Flask
+from flask_restx import Api, Resource, fields
 import json
+
 app = Flask(__name__)
+app.config.SWAGGER_UI_DOC_EXPANSION = 'list'
 
-@app.route('/')
-def hello_world():
-    return 'This is my first API call!'
+api = Api(app, 
+    version='0.1', 
+    title='FLORA Lighthouse API',
+    description='',
+    doc='/docs/'
+)
 
-@app.route('/cluster', methods=["GET"])
-def cluster():
-    # Opening JSON file
-    f = open('result.json')
+@api.route('/')
+class Home(Resource):
+    def get(self):
+        return 'This is my first API call!'
 
-    # returns JSON object as
-    # a dictionary
-    data = json.load(f)
+@api.route('/cluster', doc={"description": "Get cluster points"})
+class Cluster(Resource):
+    @api.doc(responses={
+        200: 'Success'
+    })
+    def get(self):
+        # Opening JSON file
+        f = open('result.json')
 
-    return data
+        # returns JSON object as
+        # a dictionary
+        data = json.load(f)
+
+        return data
 
 
 
