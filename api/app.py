@@ -7,6 +7,7 @@ import pandas as pd
 from pathlib import Path
 import os
 from functions import *
+from lians import *
 
 #%%
 
@@ -156,9 +157,72 @@ class Feature(Resource):
             'body':result
         }
 
+@api.route('/result', doc={"description": "Results"})
+class Result(Resource):
+    @cross_origin(supports_credentials=True)
+    @api.doc(responses={
+        200: 'Success'
+    })
+    def get(self):
+        # loading the maps for colour and labels of each pattern id
+        sub_dict, main_dict, color_dict = load_label_meanings()
 
+
+        # =============================================================================== username is set here and cannot have an underscore (_)
+        user_name = "fsh3110"
+
+        # making the pattern dataframe
+        df, time_scaler = load_process_features_study_f(BasePath_f + "processLabel/", sub_dict, main_dict, color_dict, user_name + "_pattern.csv")
+
+        # making the data series and percentages for meta and cog
+        m_series, m_perc, m_personal = create_series(df, "Metacognition", time_scaler)
+        c_series, c_perc, c_personal = create_series(df, "Cognition", time_scaler)
+
+        # loading in the pre, post and learning gain results
+        tests = results(BasePath_f + "test/", user_name)
+
+        # creating the dictionary for personal feedback
+        personal = m_personal
+        personal.update(c_personal)
+
+        # getting the essay score:
+        spiderdata = susanneScript(user_name)
+
+        # ====================================================================================================
+        # this is how the json should look really
+        print("meta:")
+        print(m_series)
+        print(", m_perc:")
+        print(m_perc)
+        print(", cog:")
+        print(c_series)
+        print(", c_perc:")
+        print(c_perc)
+        print(", pplg:")
+        print(tests)
+        print(", personal:")
+        print(personal)
+        print(", spiderData:") # has order of es_source_overlap, mean_cohesion, word_countrel
+        print(spiderdata)
+
+        result = {
+            'meta':m_series,
+            'm_perc':m_perc,
+            'cog':c_series,
+            'c_perc':c_perc,
+            'pplg':tests,
+            'personal':personal,
+            'spiderData':spiderdata
+        }
+
+        return {
+            'statusCode': 200,
+            'headers': headers,
+            'body': result
+        }
+    
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
 
 
 #%%
