@@ -5,6 +5,7 @@ from flask_cors import CORS, cross_origin
 import json
 import pandas as pd
 from pathlib import Path
+from urllib.parse import urlparse, parse_qs
 import os
 from functions import *
 from lians import *
@@ -24,7 +25,7 @@ api = Api(app,
 )
 
 headers = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': 'http://localhost:8080/',
       'Access-Control-Allow-Credentials': True,
       'Content-Type':'application/json'
     }
@@ -164,15 +165,35 @@ class Result(Resource):
         200: 'Success'
     })
     def get(self):
+        content_type = request.headers.get('Content-Type')
+        data = request.data
+        data = data.decode("utf-8")
+        
+        print(request.url)
+        
+        print("Parsed data")
+        o = urlparse(request.url)
+        query = parse_qs(o.query)
+        
+        print(query['studentNumber'])
+        studentNumber = query['studentNumber']
+        
         # loading the maps for colour and labels of each pattern id
         sub_dict, main_dict, color_dict = load_label_meanings()
 
 
         # =============================================================================== username is set here and cannot have an underscore (_)
-        user_name = "fsh3110"
+        user_name = "fsh" + str(studentNumber[0])
 
         # making the pattern dataframe
-        df, time_scaler = load_process_features_study_f(BasePath_f + "processLabel/", sub_dict, main_dict, color_dict, user_name + "_pattern.csv")
+        try:
+            df, time_scaler = load_process_features_study_f(BasePath_f + "processLabel/", sub_dict, main_dict, color_dict, user_name + "_pattern.csv")
+        except:
+            return {
+                'statusCode': 400,
+                'headers': headers            
+            }
+            pass
 
         # making the data series and percentages for meta and cog
         m_series, m_perc, m_personal = create_series(df, "Metacognition", time_scaler)
@@ -188,22 +209,22 @@ class Result(Resource):
         # getting the essay score:
         spiderdata = susanneScript(user_name)
 
-        # ====================================================================================================
-        # this is how the json should look really
-        print("meta:")
-        print(m_series)
-        print(", m_perc:")
-        print(m_perc)
-        print(", cog:")
-        print(c_series)
-        print(", c_perc:")
-        print(c_perc)
-        print(", pplg:")
-        print(tests)
-        print(", personal:")
-        print(personal)
-        print(", spiderData:") # has order of es_source_overlap, mean_cohesion, word_countrel
-        print(spiderdata)
+        # # ====================================================================================================
+        # # this is how the json should look really
+        # print("meta:")
+        # print(m_series)
+        # print(", m_perc:")
+        # print(m_perc)
+        # print(", cog:")
+        # print(c_series)
+        # print(", c_perc:")
+        # print(c_perc)
+        # print(", pplg:")
+        # print(tests)
+        # print(", personal:")
+        # print(personal)
+        # print(", spiderData:") # has order of es_source_overlap, mean_cohesion, word_countrel
+        # print(spiderdata)
 
         result = {
             'meta':m_series,
@@ -220,10 +241,6 @@ class Result(Resource):
             'headers': headers,
             'body': result
         }
-    
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
-
 
 #%%
 
