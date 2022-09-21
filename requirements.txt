@@ -64,7 +64,7 @@ nbclient==0.6.7
 nbconvert==7.0.0
 nbformat==5.4.0
 nest-asyncio==1.5.5
-nl-core-news-lg @ https://github.com/explosion/spacy-models/releases/download/nl_core_news_lg-3.4.0/nl_core_news_lg-3.4.0-py3-none-any.whl
+nl-core-news-md @ https://github.com/explosion/spacy-models/releases/download/nl_core_news_md-3.4.0/nl_core_news_md-3.4.0-py3-none-any.whl
 notebook==6.4.12
 notebook-shim==0.1.0
 numpy==1.23.3

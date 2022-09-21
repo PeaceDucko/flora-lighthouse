@@ -163,17 +163,40 @@ def create_series(df, cog_type, time_scaler):
 
 # getting and returning the pre, post and learning gain of a student:
 def results(file_path, username):
-  # ==================================================================================================== questionnaire is a server call to moodle
-  pre_test_df = pd.read_csv(file_path + "Questionnaire B.csv")
-  pre_test = pre_test_df[pre_test_df["First name"] == username].iloc[0,7]
-  pre_test = round(float(pre_test) / 1.5, 2)
+  # ========================= questionnaire is a server call to moodle
+  pre_test_questionnaires = ['Questionnaire B', 'Pretest_pilot4_dagstudenten_13092022', 'Pretest_pilot5_20092022']
+  pre_test = None
 
-  # ==================================================================================================== same here
-  post_test_df = pd.read_csv(file_path + "Questionnaire C.csv")
-  post_test = post_test_df[post_test_df["First name"] == username].iloc[0,7]
-  post_test = round(float(post_test) / 1.5, 2)
+  for questionnaire in pre_test_questionnaires:
+    print('Trying pretest questionnaire: ' + questionnaire)
+    if pre_test == None:
+      pre_test_df = pd.read_csv(file_path + "Pretest_pilot4_dagstudenten_13092022.csv")
+      pre_test = pre_test_df[pre_test_df["First name"] == username].iloc[0,7]
+      print("Pretest value: " + pre_test)
+    else:
+      break
 
-  return [pre_test, post_test, round(post_test - pre_test, 2)]
+  # print("aaaaaaaaaaaaaaaaa", pre_test)
+
+  #  same here
+  post_test_questionnaires = ['Questionnaire C', 'Posttest_pilot4_dagstudenten_13092022', 'Posttest_pilot5_20092022']
+  post_test = None
+
+  for questionnaire in post_test_questionnaires:
+    print('Trying posttest questionnaire: ' + questionnaire)
+    if post_test == None:
+      post_test_df = pd.read_csv(file_path + "Posttest_pilot4_dagstudenten_13092022.csv")
+      post_test = post_test_df[post_test_df["First name"] == username].iloc[0,7]
+      print("Posttest value: " + post_test)
+    else:
+      break
+
+  try:
+    diff = int(float(post_test)) - int(float(pre_test))
+  except:
+    diff = 0
+
+  return [pre_test, post_test, diff]
 
 # Susanne's script time 
 def susanneScript(username):
@@ -183,7 +206,7 @@ def susanneScript(username):
   # but it is still good to check
   # Note: we use the model trained on a large corpus of texts, you may want to opt for a medium or small corpus instead,
   # in case efficiency is an issue
-  nlp = spacy.load("nl_core_news_lg")
+  nlp = spacy.load("nl_core_news_md")
   # nlp = spacy.load("en_core_web_lg")
 
   # Import source texts
@@ -206,7 +229,7 @@ def susanneScript(username):
   word_countrel =[]
 
   # ====================================================================================== essay is chosen here
-  essay_file = BasePath_f + "essays/" + username + "_essay.txt"
+  essay_file = BasePath_f + "essays/essay_" + username + ".txt"
 
   essay = open(essay_file, 'r')
   word_count = len(open(essay_file, 'r+').read().split())

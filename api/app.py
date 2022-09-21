@@ -9,6 +9,7 @@ from urllib.parse import urlparse, parse_qs
 import os
 from functions import *
 from lians import *
+import re
 
 #%%
 
@@ -177,13 +178,15 @@ class Result(Resource):
         
         print(query['studentNumber'])
         studentNumber = query['studentNumber']
-        
+
         # loading the maps for colour and labels of each pattern id
         sub_dict, main_dict, color_dict = load_label_meanings()
 
 
-        # =============================================================================== username is set here and cannot have an underscore (_)
-        user_name = "fsh" + str(studentNumber[0])
+        # =============================================================================== username is set here
+        user_name = studentNumber[0].replace('_', '')
+        print(user_name)
+        # user_name = "fsh" + str(numbers)
 
         # making the pattern dataframe
         try:
