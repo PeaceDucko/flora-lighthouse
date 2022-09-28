@@ -11,7 +11,8 @@ import io
 import os
 import errno
 from operator import add
-from spacy.lang.nl.examples import sentences 
+from spacy.lang.nl.examples import sentences
+from spacy.lang.en.examples import sentences 
 from datetime import datetime
 
 label_loc = "data/label_names.csv"
@@ -170,8 +171,12 @@ def results(file_path, username):
   for questionnaire in pre_test_questionnaires:
     print('Trying pretest questionnaire: ' + questionnaire)
     if pre_test == None:
-      pre_test_df = pd.read_csv(file_path + "Pretest_pilot4_dagstudenten_13092022.csv")
-      pre_test = pre_test_df[pre_test_df["First name"] == username].iloc[0,7]
+      pre_test_df = pd.read_csv(file_path + "" + questionnaire + ".csv")
+      try:
+        pre_test = pre_test_df[pre_test_df["First name"] == username].iloc[0,7]
+      except:
+        continue
+
       print("Pretest value: " + pre_test)
     else:
       break
@@ -185,8 +190,12 @@ def results(file_path, username):
   for questionnaire in post_test_questionnaires:
     print('Trying posttest questionnaire: ' + questionnaire)
     if post_test == None:
-      post_test_df = pd.read_csv(file_path + "Posttest_pilot4_dagstudenten_13092022.csv")
-      post_test = post_test_df[post_test_df["First name"] == username].iloc[0,7]
+      post_test_df = pd.read_csv(file_path + "" + questionnaire + ".csv")
+      try:
+        post_test = post_test_df[post_test_df["First name"] == username].iloc[0,7]
+      except:
+        continue
+      
       print("Posttest value: " + post_test)
     else:
       break
@@ -206,14 +215,18 @@ def susanneScript(username):
   # but it is still good to check
   # Note: we use the model trained on a large corpus of texts, you may want to opt for a medium or small corpus instead,
   # in case efficiency is an issue
-  nlp = spacy.load("nl_core_news_md")
-  # nlp = spacy.load("en_core_web_lg")
+  # nlp = spacy.load("nl_core_news_md")
+  nlp = spacy.load("en_core_web_md")
 
   # Import source texts
   # ==================================================================================================== source texts are constant so can just be on the server
-  ai = open(BasePath_f + 'spiderScript/AI_NL.rtf', 'r')
-  dif = open(BasePath_f + 'spiderScript/Differentiatie_NL.rtf', 'r')
-  sc = open(BasePath_f + 'spiderScript/Scaffolding_NL.rtf', 'r')
+  # ai = open(BasePath_f + 'spiderScript/AI_NL.rtf', 'r')
+  # dif = open(BasePath_f + 'spiderScript/Differentiatie_NL.rtf', 'r')
+  # sc = open(BasePath_f + 'spiderScript/Scaffolding_NL.rtf', 'r')
+
+  ai = open(BasePath_f + 'spiderScript/AI_en.rtf', 'r')
+  dif = open(BasePath_f + 'spiderScript/Differentiation_en.rtf', 'r')
+  sc = open(BasePath_f + 'spiderScript/Scaffolding_en.rtf', 'r')
 
   # Build nlp objects for texts
   doc_1 = nlp(ai.read())
