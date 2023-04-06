@@ -15,6 +15,7 @@ import re
 
 app = Flask(__name__)
 app.config.SWAGGER_UI_DOC_EXPANSION = 'list'
+app.debug = True
 
 CORS(app, support_credentials=True)
 
@@ -26,7 +27,7 @@ api = Api(app,
 )
 
 headers = {
-      'Access-Control-Allow-Origin': 'http://localhost:8080/',
+      'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': True,
       'Content-Type':'application/json'
     }
@@ -191,7 +192,8 @@ class Result(Resource):
         # making the pattern dataframe
         try:
             df, time_scaler = load_process_features_study_f(BasePath_f + "processLabel/", sub_dict, main_dict, color_dict, user_name + "_pattern.csv")
-        except:
+        except Exception as e:
+            print(e)
             return {
                 'statusCode': 400,
                 'headers': headers            
@@ -244,6 +246,9 @@ class Result(Resource):
             'headers': headers,
             'body': result
         }
+
+if __name__ == "__main__":
+    app.run(port=5001)
 
 #%%
 

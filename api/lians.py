@@ -14,15 +14,18 @@ from operator import add
 from spacy.lang.nl.examples import sentences
 from spacy.lang.en.examples import sentences 
 from datetime import datetime
+from pathlib import Path
 
+root_path = "/data/www/flora/flora-lighthouse/api/"
 label_loc = "data/label_names.csv"
 # basepath for all files
-BasePath_f = "data/"
+BasePath_f = root_path + "data/"
 
 # reading in the label csv to assign each pattern label to a type and sub type
 def load_label_meanings():
   # =============================================================================== label names is constant and used to map individual labels to the parent process
-  labels_df = pd.read_csv(label_loc)
+  print(str(Path(label_loc)))
+  labels_df = pd.read_csv(os.path.join(root_path, label_loc))
   sub_dict = {}
   main_dict = {}
   color_dict = {}
@@ -215,18 +218,18 @@ def susanneScript(username):
   # but it is still good to check
   # Note: we use the model trained on a large corpus of texts, you may want to opt for a medium or small corpus instead,
   # in case efficiency is an issue
-  # nlp = spacy.load("nl_core_news_md")
-  nlp = spacy.load("en_core_web_md")
+  nlp = spacy.load("nl_core_news_md")
+  # nlp = spacy.load("en_core_web_md")
 
   # Import source texts
   # ==================================================================================================== source texts are constant so can just be on the server
-  # ai = open(BasePath_f + 'spiderScript/AI_NL.rtf', 'r')
-  # dif = open(BasePath_f + 'spiderScript/Differentiatie_NL.rtf', 'r')
-  # sc = open(BasePath_f + 'spiderScript/Scaffolding_NL.rtf', 'r')
+  ai = open(BasePath_f + 'spiderScript/AI_NL.rtf', 'r')
+  dif = open(BasePath_f + 'spiderScript/Differentiatie_NL.rtf', 'r')
+  sc = open(BasePath_f + 'spiderScript/Scaffolding_NL.rtf', 'r')
 
-  ai = open(BasePath_f + 'spiderScript/AI_en.rtf', 'r')
-  dif = open(BasePath_f + 'spiderScript/Differentiation_en.rtf', 'r')
-  sc = open(BasePath_f + 'spiderScript/Scaffolding_en.rtf', 'r')
+  # ai = open(BasePath_f + 'spiderScript/AI_en.rtf', 'r')
+  # dif = open(BasePath_f + 'spiderScript/Differentiation_en.rtf', 'r')
+  # sc = open(BasePath_f + 'spiderScript/Scaffolding_en.rtf', 'r')
 
   # Build nlp objects for texts
   doc_1 = nlp(ai.read())
@@ -244,12 +247,17 @@ def susanneScript(username):
   # ====================================================================================== essay is chosen here
   essay_file = BasePath_f + "essays/essay_" + username + ".txt"
 
-  essay = open(essay_file, 'r')
-  word_count = len(open(essay_file, 'r+').read().split())
+  with io.open(essay_file, "r", encoding="utf-8") as essay:
+      essay = essay.read() 
+      word_count = len(essay.split())
+
+  # essay = open(essay_file, 'r', encoding='utf-8')
+  # word_count = len(open(essay_file, 'r+').read().split())
+  print(word_count)
   word_countrel = word_count/ max_numberwords
 
   # Build nlp object for the essay
-  doc_essay = nlp(essay.read())
+  doc_essay = nlp(essay)
 
   # Tokenize essay into sentences
   l=[]
