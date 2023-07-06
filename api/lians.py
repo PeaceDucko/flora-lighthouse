@@ -79,7 +79,10 @@ def create_series(df, cog_type, time_scaler):
   blank_colour = "#ebebeb"
 
   # selecting the correct type of labels
-  m_df = df[df["Process_main"] == cog_type]
+  if cog_type == 'Combined':
+    m_df = df[(df["Process_main"] == 'Metacognition') | (df["Process_main"] == 'Cognition')]
+  else:
+    m_df = df[df["Process_main"] == cog_type]
   m_df = m_df[["Process Start Time",	"Process End Time",	"Process_Time_Spent",	"Process_sub", "Color"]].reset_index(inplace = False)
 
   # adds a blank at the start since not both meta and cog can have the first label
@@ -139,6 +142,7 @@ def create_series(df, cog_type, time_scaler):
   orders = {}
   orders["Metacognition"] = ["Orientatie", "Plannen", "Evaluatie", "Monitoren"]
   orders["Cognition"] = ["Lezen", "Herlezen", "Schrijven"]
+  orders["Combined"] = ["Orientatie", "Plannen", "Evaluatie", "Monitoren", "Lezen", "Herlezen", "Schrijven"]
 
   # getting the percentages of each process, along with time until started and time spent on it
   perc = []
