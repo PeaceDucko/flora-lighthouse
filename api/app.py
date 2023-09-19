@@ -203,6 +203,7 @@ class Result(Resource):
         # making the data series and percentages for meta and cog
         m_series, m_perc, m_personal = create_series(df, "Metacognition", time_scaler)
         c_series, c_perc, c_personal = create_series(df, "Cognition", time_scaler)
+        series, perc, personal = create_series(df, "Combined", time_scaler)
 
         # loading in the pre, post and learning gain results
         tests = results(BasePath_f + "test/", user_name)
@@ -238,7 +239,9 @@ class Result(Resource):
             'c_perc':c_perc,
             'pplg':tests,
             'personal':personal,
-            'spiderData':spiderdata
+            'spiderData':spiderdata,
+            'combined_perc': perc,
+            'combined_series': series,
         }
 
         return {
