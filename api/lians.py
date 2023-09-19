@@ -140,9 +140,9 @@ def create_series(df, cog_type, time_scaler):
 
   # the order specified
   orders = {}
-  orders["Metacognition"] = ["Orientatie", "Plannen", "Evaluatie", "Monitoren"]
-  orders["Cognition"] = ["Lezen", "Herlezen", "Schrijven"]
-  orders["Combined"] = ["Orientatie", "Plannen", "Evaluatie", "Monitoren", "Lezen", "Herlezen", "Schrijven"]
+  orders["Metacognition"] = ["Orientatie", "Plannen", "Monitoren", "Evaluatie"]
+  orders["Cognition"] = ["Lezen", "Herlezen", "Schrijven", "Verwerking / Organisatie"]
+  orders["Combined"] = ["Orientatie", "Plannen", "Monitoren", "Evaluatie", "Lezen", "Herlezen", "Schrijven", "Verwerking / Organisatie"]
 
   # getting the percentages of each process, along with time until started and time spent on it
   perc = []
